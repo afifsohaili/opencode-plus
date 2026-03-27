@@ -1,7 +1,7 @@
 {
-  "name": "opencode",
-  "displayName": "opencode",
-  "description": "opencode for VS Code",
+  "name": "opencode-plus",
+  "displayName": "opencode+",
+  "description": "Enhanced opencode extension with code review features",
   "version": "1.3.2",
   "publisher": "sst-dev",
   "repository": {
@@ -43,6 +43,22 @@
       {
         "command": "opencode.addFilepathToTerminal",
         "title": "Add Filepath to Terminal"
+      },
+      {
+        "command": "opencode.continueInNewTab",
+        "title": "Continue opencode in new tab",
+        "icon": {
+          "light": "images/button-dark.svg",
+          "dark": "images/button-light.svg"
+        }
+      },
+      {
+        "command": "opencode.addComment",
+        "title": "Add Comment to opencode",
+        "icon": {
+          "light": "images/button-dark.svg",
+          "dark": "images/button-light.svg"
+        }
       }
     ],
     "menus": {
@@ -50,6 +66,13 @@
         {
           "command": "opencode.openNewTerminal",
           "group": "navigation"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "opencode.addComment",
+          "group": "9_cutcopypaste@5",
+          "when": "editorHasSelection"
         }
       ]
     },
@@ -77,6 +100,23 @@
         "mac": "cmd+alt+k",
         "win": "ctrl+alt+K",
         "linux": "ctrl+alt+K"
+      },
+      {
+        "command": "opencode.continueInNewTab",
+        "title": "Continue opencode in new tab",
+        "key": "cmd+shift+c",
+        "mac": "cmd+shift+c",
+        "win": "ctrl+shift+c",
+        "linux": "ctrl+shift+c"
+      },
+      {
+        "command": "opencode.addComment",
+        "title": "Add comment to opencode",
+        "key": "cmd+shift+a",
+        "mac": "cmd+shift+a",
+        "win": "ctrl+shift+a",
+        "linux": "ctrl+shift+a",
+        "when": "editorHasSelection"
       }
     ]
   },

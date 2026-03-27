@@ -1,6 +1,6 @@
-# opencode VS Code Extension
+# opencode+ VS Code Extension
 
-A Visual Studio Code extension that integrates [opencode](https://opencode.ai) directly into your development workflow.
+A Visual Studio Code extension that integrates [opencode](https://opencode.ai) directly into your development workflow. This is an enhanced fork of the official opencode extension with code review features.
 
 ## Prerequisites
 

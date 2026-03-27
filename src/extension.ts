@@ -10,6 +10,10 @@ export function activate(context: vscode.ExtensionContext) {
     await openTerminal()
   })
 
+  let continueInNewTabDisposable = vscode.commands.registerCommand("opencode.continueInNewTab", async () => {
+    await openTerminal(true)
+  })
+
   let openTerminalDisposable = vscode.commands.registerCommand("opencode.openTerminal", async () => {
     // An opencode terminal already exists => focus it
     const existingTerminal = vscode.window.terminals.find((t) => t.name === TERMINAL_NAME)
@@ -40,9 +44,48 @@ export function activate(context: vscode.ExtensionContext) {
     }
   })
 
-  context.subscriptions.push(openTerminalDisposable, addFilepathDisposable)
+  let addCommentDisposable = vscode.commands.registerCommand("opencode.addComment", async () => {
+    const fileRef = getActiveFile()
+    if (!fileRef) {
+      return
+    }
 
-  async function openTerminal() {
+    const comment = await vscode.window.showInputBox({
+      prompt: `Comment for ${fileRef}`,
+      placeHolder: "Enter your comment...",
+      ignoreFocusOut: true,
+    })
+
+    if (!comment) {
+      return
+    }
+
+    // Find an opencode terminal
+    const terminal = vscode.window.terminals.find((t) => t.name === TERMINAL_NAME)
+    if (!terminal) {
+      vscode.window.showErrorMessage("No opencode terminal found. Open opencode first.")
+      return
+    }
+
+    // @ts-ignore
+    const port = terminal.creationOptions.env?.["_EXTENSION_OPENCODE_PORT"]
+    if (!port) {
+      vscode.window.showErrorMessage("Could not find opencode port.")
+      return
+    }
+
+    // Format: @filepath:line-line\n\ncomment
+    const formattedComment = `${fileRef}\n\n${comment}\n\n`
+
+    await appendPrompt(parseInt(port), formattedComment)
+    terminal.show()
+
+    vscode.window.showInformationMessage(`Comment added for ${fileRef}`)
+  })
+
+  context.subscriptions.push(openTerminalDisposable, openNewTerminalDisposable, addFilepathDisposable, continueInNewTabDisposable, addCommentDisposable)
+
+  async function openTerminal(continueSession = false) {
     // Create a new terminal in split screen
     const port = Math.floor(Math.random() * (65535 - 16384 + 1)) + 16384
     const terminal = vscode.window.createTerminal({
@@ -62,7 +105,8 @@ export function activate(context: vscode.ExtensionContext) {
     })
 
     terminal.show()
-    terminal.sendText(`opencode --port ${port}`)
+    const continueFlag = continueSession ? " --continue" : ""
+    terminal.sendText(`opencode --port ${port}${continueFlag}`)
 
     const fileRef = getActiveFile()
     if (!fileRef) {

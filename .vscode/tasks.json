@@ -1,0 +1,25 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "compile",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": ["$esbuild"],
+      "label": "npm: compile",
+      "detail": "bun run check-types && bun run lint && node esbuild.js"
+    },
+    {
+      "type": "npm",
+      "script": "watch:esbuild",
+      "group": "build",
+      "problemMatcher": ["$esbuild-watch"],
+      "isBackground": true,
+      "label": "npm: watch:esbuild",
+      "detail": "node esbuild.js --watch"
+    }
+  ]
+}
