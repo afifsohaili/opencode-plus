@@ -74,6 +74,13 @@
           "group": "9_cutcopypaste@5",
           "when": "editorHasSelection"
         }
+      ],
+      "comments/commentThread/context": [
+        {
+          "command": "opencode.addComment",
+          "group": "inline",
+          "when": "commentController == opencode-comments"
+        }
       ]
     },
     "keybindings": [
