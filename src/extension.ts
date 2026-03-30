@@ -40,7 +40,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   // Handle reply submission (user clicked "Reply" in comment thread)
   context.subscriptions.push(
-    vscode.commands.registerCommand("opencode.addComment", async (reply: vscode.CommentReply) => {
+    vscode.commands.registerCommand("opencode-plus.addComment", async (reply: vscode.CommentReply) => {
       const thread = reply.thread;
       const text = reply.text.trim();
 
@@ -105,15 +105,15 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.window.showInformationMessage(`Comment added for ${fileRef}`);
   }
 
-  let openNewTerminalDisposable = vscode.commands.registerCommand("opencode.openNewTerminal", async () => {
+  let openNewTerminalDisposable = vscode.commands.registerCommand("opencode-plus.openNewTerminal", async () => {
     await openTerminal();
   });
 
-  let continueInNewTabDisposable = vscode.commands.registerCommand("opencode.continueInNewTab", async () => {
+  let continueInNewTabDisposable = vscode.commands.registerCommand("opencode-plus.continueInNewTab", async () => {
     await openTerminal(true);
   });
 
-  let openTerminalDisposable = vscode.commands.registerCommand("opencode.openTerminal", async () => {
+  let openTerminalDisposable = vscode.commands.registerCommand("opencode-plus.openTerminal", async () => {
     // An opencode terminal already exists => focus it
     const existingTerminal = vscode.window.terminals.find((t) => t.name === TERMINAL_NAME);
     if (existingTerminal) {
@@ -124,7 +124,7 @@ export function activate(context: vscode.ExtensionContext) {
     await openTerminal();
   });
 
-  let addFilepathDisposable = vscode.commands.registerCommand("opencode.addFilepathToTerminal", async () => {
+  let addFilepathDisposable = vscode.commands.registerCommand("opencode-plus.addFilepathToTerminal", async () => {
     const fileRef = getActiveFile();
     if (!fileRef) {
       return;

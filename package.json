@@ -2,7 +2,7 @@
   "name": "opencode-plus",
   "displayName": "opencode+",
   "description": "Enhanced opencode extension with code review features",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "publisher": "afifsohaili",
   "repository": {
     "type": "git",
@@ -25,15 +25,7 @@
   "contributes": {
     "commands": [
       {
-        "command": "opencode.openTerminal",
-        "title": "Open opencode",
-        "icon": {
-          "light": "images/button-dark.svg",
-          "dark": "images/button-light.svg"
-        }
-      },
-      {
-        "command": "opencode.openNewTerminal",
+        "command": "opencode-plus.openNewTerminal",
         "title": "Open opencode in new tab",
         "icon": {
           "light": "images/button-dark.svg",
@@ -41,20 +33,20 @@
         }
       },
       {
-        "command": "opencode.addFilepathToTerminal",
+        "command": "opencode-plus.addFilepathToTerminal",
         "title": "Add Filepath to Terminal"
       },
       {
-        "command": "opencode.continueInNewTab",
-        "title": "Continue opencode in new tab",
+        "command": "opencode-plus.continueInNewTab",
+        "title": "Continue last Opencode session in new tab",
         "icon": {
           "light": "images/button-dark.svg",
           "dark": "images/button-light.svg"
         }
       },
       {
-        "command": "opencode.addComment",
-        "title": "Add Comment to opencode",
+        "command": "opencode-plus.addComment",
+        "title": "Add comment to active Opencode instance",
         "icon": {
           "light": "images/button-dark.svg",
           "dark": "images/button-light.svg"
@@ -64,20 +56,20 @@
     "menus": {
       "editor/title": [
         {
-          "command": "opencode.openNewTerminal",
+          "command": "opencode-plus.openNewTerminal",
           "group": "navigation"
         }
       ],
       "editor/context": [
         {
-          "command": "opencode.addComment",
+          "command": "opencode-plus.addComment",
           "group": "9_cutcopypaste@5",
           "when": "editorHasSelection"
         }
       ],
       "comments/commentThread/context": [
         {
-          "command": "opencode.addComment",
+          "command": "opencode-plus.addComment",
           "group": "inline",
           "when": "commentController == opencode-comments"
         }
@@ -85,15 +77,7 @@
     },
     "keybindings": [
       {
-        "command": "opencode.openTerminal",
-        "title": "Run opencode",
-        "key": "cmd+escape",
-        "mac": "cmd+escape",
-        "win": "ctrl+escape",
-        "linux": "ctrl+escape"
-      },
-      {
-        "command": "opencode.openNewTerminal",
+        "command": "opencode-plus.openNewTerminal",
         "title": "Run opencode",
         "key": "cmd+shift+escape",
         "mac": "cmd+shift+escape",
@@ -101,7 +85,7 @@
         "linux": "ctrl+shift+escape"
       },
       {
-        "command": "opencode.addFilepathToTerminal",
+        "command": "opencode-plus.addFilepathToTerminal",
         "title": "opencode: Insert At-Mentioned",
         "key": "cmd+alt+k",
         "mac": "cmd+alt+k",
@@ -109,7 +93,7 @@
         "linux": "ctrl+alt+K"
       },
       {
-        "command": "opencode.continueInNewTab",
+        "command": "opencode-plus.continueInNewTab",
         "title": "Continue opencode in new tab",
         "key": "cmd+shift+c",
         "mac": "cmd+shift+c",
@@ -117,7 +101,7 @@
         "linux": "ctrl+shift+c"
       },
       {
-        "command": "opencode.addComment",
+        "command": "opencode-plus.addComment",
         "title": "Add comment to opencode",
         "key": "cmd+shift+a",
         "mac": "cmd+shift+a",
