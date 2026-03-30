@@ -2,11 +2,11 @@
   "name": "opencode-plus",
   "displayName": "opencode+",
   "description": "Enhanced opencode extension with code review features",
-  "version": "1.3.2",
-  "publisher": "sst-dev",
+  "version": "0.1.0",
+  "publisher": "afifsohaili",
   "repository": {
     "type": "git",
-    "url": "https://github.com/anomalyco/opencode"
+    "url": "https://github.com/afifsohaili/opencode-plus"
   },
   "license": "MIT",
   "icon": "images/icon.png",
