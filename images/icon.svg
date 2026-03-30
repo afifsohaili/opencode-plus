@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <rect width="128" height="128" fill="#000000" rx="24"/>
+  <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" 
+        font-family="system-ui, -apple-system, sans-serif" 
+        font-size="52" font-weight="bold" fill="#000000" stroke="#ffffff" stroke-width="2">OP+</text>
+</svg>
