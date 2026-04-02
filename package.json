@@ -2,7 +2,7 @@
   "name": "opencode-plus",
   "displayName": "opencode+",
   "description": "Enhanced opencode extension with code review features",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "publisher": "afifsohaili",
   "repository": {
     "type": "git",
@@ -26,7 +26,7 @@
     "commands": [
       {
         "command": "opencode-plus.openNewTerminal",
-        "title": "Open opencode in new tab",
+        "title": "Opencode Plus: Open in new tab",
         "icon": {
           "light": "images/button-dark.svg",
           "dark": "images/button-light.svg"
@@ -34,23 +34,19 @@
       },
       {
         "command": "opencode-plus.addFilepathToTerminal",
-        "title": "Add Filepath to Terminal"
-      },
-      {
-        "command": "opencode-plus.continueInNewTab",
-        "title": "Continue last Opencode session in new tab",
-        "icon": {
-          "light": "images/button-dark.svg",
-          "dark": "images/button-light.svg"
-        }
+        "title": "Opencode Plus: Add Filepath to Terminal"
       },
       {
         "command": "opencode-plus.addComment",
-        "title": "Add comment to active Opencode instance",
+        "title": "Opencode Plus: Add comment to instance",
         "icon": {
           "light": "images/button-dark.svg",
           "dark": "images/button-light.svg"
         }
+      },
+      {
+        "command": "opencode-plus.showLogs",
+        "title": "Opencode Plus: Show Logs"
       }
     ],
     "menus": {
@@ -78,7 +74,7 @@
     "keybindings": [
       {
         "command": "opencode-plus.openNewTerminal",
-        "title": "Run opencode",
+        "title": "Opencode Plus: Run",
         "key": "cmd+shift+escape",
         "mac": "cmd+shift+escape",
         "win": "ctrl+shift+escape",
@@ -86,23 +82,15 @@
       },
       {
         "command": "opencode-plus.addFilepathToTerminal",
-        "title": "opencode: Insert At-Mentioned",
+        "title": "Opencode Plus: Insert At-Mentioned",
         "key": "cmd+alt+k",
         "mac": "cmd+alt+k",
         "win": "ctrl+alt+K",
         "linux": "ctrl+alt+K"
       },
       {
-        "command": "opencode-plus.continueInNewTab",
-        "title": "Continue opencode in new tab",
-        "key": "cmd+shift+c",
-        "mac": "cmd+shift+c",
-        "win": "ctrl+shift+c",
-        "linux": "ctrl+shift+c"
-      },
-      {
         "command": "opencode-plus.addComment",
-        "title": "Add comment to opencode",
+        "title": "Opencode Plus: Add comment",
         "key": "cmd+shift+a",
         "mac": "cmd+shift+a",
         "win": "ctrl+shift+a",

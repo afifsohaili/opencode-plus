@@ -1,11 +1,59 @@
 import * as vscode from "vscode";
+import * as fs from "fs";
+import * as path from "path";
 
 const TERMINAL_NAME = "opencode";
 
 // Track comments that have been sent to opencode to avoid duplicates
 const sentComments = new Set<string>();
 
+// Track last sent message per port for picker display
+const portLastSent = new Map<number, { message: string; timestamp: number }>();
+
+// Logger setup
+let outputChannel: vscode.OutputChannel;
+let logFilePath: string | undefined;
+
+function initializeLogger(context: vscode.ExtensionContext) {
+  // Output channel for VSCode panel
+  outputChannel = vscode.window.createOutputChannel("Opencode Plus");
+  context.subscriptions.push(outputChannel);
+  
+  // Optional: Write to file for persistent logs
+  logFilePath = path.join(context.logPath, "opencode-plus.log");
+  
+  // Ensure log directory exists
+  if (!fs.existsSync(context.logPath)) {
+    fs.mkdirSync(context.logPath, { recursive: true });
+  }
+  
+  log("Logger initialized", { logFilePath });
+}
+
+export function log(message: string, data?: unknown) {
+  const timestamp = new Date().toISOString();
+  const logMessage = `[${timestamp}] ${message}`;
+  
+  // Write to OutputChannel
+  outputChannel?.appendLine(logMessage);
+  if (data) {
+    outputChannel?.appendLine(JSON.stringify(data, null, 2));
+  }
+  
+  // Write to file
+  if (logFilePath) {
+    fs.appendFileSync(logFilePath, logMessage + "\n");
+    if (data) {
+      fs.appendFileSync(logFilePath, JSON.stringify(data, null, 2) + "\n");
+    }
+  }
+  
+  // Also console for debugging in dev host
+  console.log(logMessage, data);
+}
+
 export function activate(context: vscode.ExtensionContext) {
+  initializeLogger(context);
   // Create comment controller for inline comment input
   const commentController = vscode.comments.createCommentController(
     "opencode-comments",
@@ -60,6 +108,105 @@ export function activate(context: vscode.ExtensionContext) {
     })
   );
 
+  async function getOpencodeSessionInfo(port: number): Promise<{ title?: string; lastMessage?: string; sessionId?: string }> {
+    try {
+      log(`Fetching session info from port ${port}`);
+      
+      // Fetch sessions list
+      const sessionsRes = await fetch(`http://127.0.0.1:${port}/session`);
+      log(`Port ${port} sessions response status:`, sessionsRes.status);
+      
+      if (!sessionsRes.ok) {
+        return {};
+      }
+      const sessions = await sessionsRes.json() as Array<{ id: string; title?: string }>;
+      log(`Port ${port} sessions:`, sessions);
+      
+      if (!sessions || sessions.length === 0) {
+        return {};
+      }
+      
+      // Get the most recent session
+      const currentSession = sessions[0];
+      const title = currentSession.title;
+      log(`Port ${port} using session:`, { id: currentSession.id, title });
+      
+      // Fetch last message
+      const messagesRes = await fetch(`http://127.0.0.1:${port}/session/${currentSession.id}/message?limit=1`);
+      if (!messagesRes.ok) {
+        return { title, sessionId: currentSession.id };
+      }
+      
+      const messages = await messagesRes.json() as Array<{ info?: { role?: string }; parts?: Array<{ text?: string }> }>;
+      log(`Port ${port} messages:`, messages);
+      
+      if (!messages || messages.length === 0) {
+        return { title, sessionId: currentSession.id };
+      }
+      
+      const lastMsg = messages[0];
+      const lastText = lastMsg.parts?.[0]?.text?.substring(0, 50) || '';
+      
+      return { title, lastMessage: lastText, sessionId: currentSession.id };
+    } catch (error) {
+      log(`Error fetching session info from port ${port}:`, error);
+      return {};
+    }
+  }
+
+  async function selectOpencodeTerminal(): Promise<vscode.Terminal | null> {
+    const terminals = vscode.window.terminals.filter((t) => t.name === TERMINAL_NAME);
+
+    if (terminals.length === 0) {
+      vscode.window.showErrorMessage("No opencode terminal found. Open opencode first.");
+      return null;
+    }
+
+    if (terminals.length === 1) {
+      return terminals[0];
+    }
+
+    // Multiple terminals - show picker with context
+    const items = [];
+    
+    for (let index = 0; index < terminals.length; index++) {
+      const t = terminals[index];
+      // @ts-ignore
+      const port = t.creationOptions?.env?.["_EXTENSION_OPENCODE_PORT"];
+      let description: string | undefined;
+      
+      if (port) {
+        const portNum = parseInt(port);
+        
+        // Check if we've sent something to this port locally
+        const lastSent = portLastSent.get(portNum);
+        if (lastSent) {
+          const preview = lastSent.message.length > 50 
+            ? lastSent.message.substring(0, 50) + "..."
+            : lastSent.message;
+          description = `Last sent: "${preview}"`;
+        }
+        
+        // If no description yet, show port
+        if (!description) {
+          description = `Port ${port}`;
+        }
+      }
+      
+      items.push({
+        label: `opencode #${index + 1}`,
+        description,
+        terminal: t,
+      });
+    }
+
+    const selected = await vscode.window.showQuickPick(items, {
+      placeHolder: "Select which opencode instance to send to",
+    });
+
+    return selected?.terminal ?? null;
+  }
+
   async function sendCommentToOpencode(thread: vscode.CommentThread, text: string) {
     // Get file reference for this thread's range
     const document = thread.uri;
@@ -83,10 +230,9 @@ export function activate(context: vscode.ExtensionContext) {
         ? `@${relativePath}#L${startLine}`
         : `@${relativePath}#L${startLine}-${endLine}`;
 
-    // Find opencode terminal
-    const terminal = vscode.window.terminals.find((t) => t.name === TERMINAL_NAME);
+    // Select opencode terminal
+    const terminal = await selectOpencodeTerminal();
     if (!terminal) {
-      vscode.window.showErrorMessage("No opencode terminal found. Open opencode first.");
       return;
     }
 
@@ -100,6 +246,10 @@ export function activate(context: vscode.ExtensionContext) {
     // Format and send to opencode
     const formattedComment = `${fileRef}\n\n${text}\n\n`;
     await appendPrompt(parseInt(port), formattedComment);
+    
+    // Track what we sent for picker display
+    portLastSent.set(parseInt(port), { message: text, timestamp: Date.now() });
+    
     terminal.show();
 
     vscode.window.showInformationMessage(`Comment added for ${fileRef}`);
@@ -107,10 +257,6 @@ export function activate(context: vscode.ExtensionContext) {
 
   let openNewTerminalDisposable = vscode.commands.registerCommand("opencode-plus.openNewTerminal", async () => {
     await openTerminal();
-  });
-
-  let continueInNewTabDisposable = vscode.commands.registerCommand("opencode-plus.continueInNewTab", async () => {
-    await openTerminal(true);
   });
 
   let openTerminalDisposable = vscode.commands.registerCommand("opencode-plus.openTerminal", async () => {
@@ -130,24 +276,35 @@ export function activate(context: vscode.ExtensionContext) {
       return;
     }
 
-    const terminal = vscode.window.activeTerminal;
+    // Select opencode terminal
+    const terminal = await selectOpencodeTerminal();
     if (!terminal) {
       return;
     }
 
-    if (terminal.name === TERMINAL_NAME) {
-      // @ts-ignore
-      const port = terminal.creationOptions.env?.["_EXTENSION_OPENCODE_PORT"];
-      port ? await appendPrompt(parseInt(port), fileRef) : terminal.sendText(fileRef, false);
-      terminal.show();
+    // @ts-ignore
+    const port = terminal.creationOptions.env?.["_EXTENSION_OPENCODE_PORT"];
+    if (port) {
+      await appendPrompt(parseInt(port), fileRef);
+      // Track what we sent for picker display
+      portLastSent.set(parseInt(port), { message: fileRef, timestamp: Date.now() });
+    } else {
+      terminal.sendText(fileRef, false);
     }
+    terminal.show();
+  });
+
+  // Command to show output channel logs
+  const showLogsDisposable = vscode.commands.registerCommand("opencode-plus.showLogs", () => {
+    outputChannel.show();
+    vscode.window.showInformationMessage(`Logs also saved to: ${logFilePath}`);
   });
 
   context.subscriptions.push(
     openTerminalDisposable,
     openNewTerminalDisposable,
     addFilepathDisposable,
-    continueInNewTabDisposable
+    showLogsDisposable
   );
 
   async function openTerminal(continueSession = false) {
