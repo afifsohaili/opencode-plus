@@ -2,7 +2,7 @@
   "name": "opencode-plus",
   "displayName": "opencode+",
   "description": "Enhanced opencode extension with code review features",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "publisher": "afifsohaili",
   "repository": {
     "type": "git",
@@ -37,16 +37,20 @@
         "title": "Opencode Plus: Add Filepath to Terminal"
       },
       {
-        "command": "opencode-plus.addComment",
-        "title": "Opencode Plus: Add comment to instance",
+        "command": "opencode-plus.continueInNewTab",
+        "title": "Opencode Plus: Continue from last session",
         "icon": {
           "light": "images/button-dark.svg",
           "dark": "images/button-light.svg"
         }
       },
       {
-        "command": "opencode-plus.showLogs",
-        "title": "Opencode Plus: Show Logs"
+        "command": "opencode-plus.addComment",
+        "title": "Opencode Plus: Add comment to instance",
+        "icon": {
+          "light": "images/button-dark.svg",
+          "dark": "images/button-light.svg"
+        }
       }
     ],
     "menus": {
@@ -87,6 +91,14 @@
         "mac": "cmd+alt+k",
         "win": "ctrl+alt+K",
         "linux": "ctrl+alt+K"
+      },
+      {
+        "command": "opencode-plus.continueInNewTab",
+        "title": "Opencode Plus: Continue from last session",
+        "key": "cmd+shift+c",
+        "mac": "cmd+shift+c",
+        "win": "ctrl+shift+c",
+        "linux": "ctrl+shift+c"
       },
       {
         "command": "opencode-plus.addComment",

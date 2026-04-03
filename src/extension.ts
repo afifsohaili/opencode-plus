@@ -294,17 +294,15 @@ export function activate(context: vscode.ExtensionContext) {
     terminal.show();
   });
 
-  // Command to show output channel logs
-  const showLogsDisposable = vscode.commands.registerCommand("opencode-plus.showLogs", () => {
-    outputChannel.show();
-    vscode.window.showInformationMessage(`Logs also saved to: ${logFilePath}`);
+  let continueInNewTabDisposable = vscode.commands.registerCommand("opencode-plus.continueInNewTab", async () => {
+    await openTerminal(true);
   });
 
   context.subscriptions.push(
     openTerminalDisposable,
     openNewTerminalDisposable,
-    addFilepathDisposable,
-    showLogsDisposable
+    continueInNewTabDisposable,
+    addFilepathDisposable
   );
 
   async function openTerminal(continueSession = false) {
