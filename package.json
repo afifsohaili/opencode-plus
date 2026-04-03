@@ -2,7 +2,7 @@
   "name": "opencode-plus",
   "displayName": "opencode+",
   "description": "Enhanced opencode extension with code review features",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "publisher": "afifsohaili",
   "repository": {
     "type": "git",
