@@ -371,6 +371,12 @@ export function activate(context: vscode.ExtensionContext) {
     }
 
     const document = activeEditor.document;
+
+    // Exclude .rc files
+    if (document.fileName.endsWith(".rc")) {
+      return;
+    }
+
     const workspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri);
     if (!workspaceFolder) {
       return;
